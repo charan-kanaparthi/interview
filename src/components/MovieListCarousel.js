@@ -26,23 +26,31 @@ const MovieListCarousel = ({ movies }) => {
       lg: 6,
     },
   };
+  const chunkArray = (arr, chunkSize) =>
+    Array.from({ length: Math.ceil(arr.length / chunkSize) }, (_, i) =>
+      arr.slice(i * chunkSize, i * chunkSize + chunkSize)
+    );
+
+  const movieChunks = chunkArray(movies, 6); // Group movies into chunks of 6
 
   return (
-    <div className="relative">
+    <div className="relative ">
       <div
         data-hs-carousel={JSON.stringify(carouselConfig)}
         className="relative"
       >
         <div className="relative w-full overflow-hidden rounded-lg hs-carousel">
-          <div className="hs-carousel-body flex flex-nowrap overflow-hidden transition-[height,transform] duration-700 opacity-0">
-            {movies.map((movie, index) => (
-              <div
-                key={index}
-                className="flex-none w-1/6 px-1 hs-carousel-slide"
-              >
-                <div className="flex justify-center h-full p-6 bg-gray-100 dark:bg-neutral-900">
-                  <MovieCard movie={movie} />
-                </div>
+          <div className="hs-carousel-body flex flex-nowrap overflow-hidden transition-[height,transform] duration-700">
+            {movieChunks.map((chunk, index) => (
+              <div className="flex w-full hs-carousel-slide" key={index}>
+                {chunk.map((movie, index) => (
+                  <div
+                    key={index}
+                    className="flex-shrink-0 w-[calc(100%/6)] px-2" // Adjust card width here
+                  >
+                    <MovieCard movie={movie} />
+                  </div>
+                ))}
               </div>
             ))}
           </div>
