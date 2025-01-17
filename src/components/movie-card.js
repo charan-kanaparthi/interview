@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FallbackImage from "./FallbackImage";
 import FavouriteIcon from "./FavouriteIcon";
 import { addFavouriteMovie, removeFavouriteMovie } from "@/server/movies";
@@ -10,15 +10,13 @@ export default function MovieCard({ movie }) {
   const [isFavorite, setIsFavorite] = useState(movie.isFavorite);
 
   const handleSetFavourite = async (isFavourite) => {
-    setIsFavorite(isFavourite);
-
     if (isFavourite) {
       await removeFavouriteMovie(movie);
-      window.location.reload();
     } else {
       await addFavouriteMovie(movie);
-      window.location.reload();
     }
+    setIsFavorite(isFavourite);
+    window.location.reload();
   };
 
   return (
@@ -41,7 +39,7 @@ export default function MovieCard({ movie }) {
             {movie.title}
           </h2>
           <FavouriteIcon
-            isFavorite={isFavorite || false}
+            isFavorite={isFavorite}
             toggleFavourite={handleSetFavourite}
           />
         </div>

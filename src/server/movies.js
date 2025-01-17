@@ -41,21 +41,18 @@ export async function getFavouriteMovies() {
 }
 
 export async function addFavouriteMovie(movie) {
-  const index = favoriteMovies.find((fav) => fav.title === movie.title);
-  if (index === -1) {
-    favoriteMovies.push(movie);
-    toogleFavourite(movie);
-  }
+  favoriteMovies.push(movie);
+  toogleFavourite(movie);
 }
 export async function removeFavouriteMovie(movie) {
   favoriteMovies = favoriteMovies.filter((fav) => fav.title !== movie.title);
-  toogleFavourite(movie);
+  await toogleFavourite(movie);
 }
 
 export async function toogleFavourite(movie) {
   if (movie.providerName === "IMDB") {
-    toggleimdbIDFavoriteMovie(movie.title);
+    await toggleimdbIDFavoriteMovie(movie.title);
   } else if (movie.providerName === "RT") {
-    toggleRTFavoriteMovie(movie.title);
+    await toggleRTFavoriteMovie(movie.title);
   }
 }
