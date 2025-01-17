@@ -1,7 +1,10 @@
 "use server";
 
-import { getMovies as getImdb } from "./providers/imdb";
-import { getMovies as getRT } from "./providers/rt";
+import {
+  getMovies as getImdb,
+  toggleimdbIDFavoriteMovie,
+} from "./providers/imdb";
+import { getMovies as getRT, toggleRTFavoriteMovie } from "./providers/rt";
 
 // HINT: these functions run on the server. console.log will output to the terminal.
 let favoriteMovies = [];
@@ -17,7 +20,6 @@ export async function getGenereAndMovies() {
   // TODO: sort genres by the name. (Bug 2)
 
   const movies = [...(await getImdb()), ...(await getRT())];
-  const favoriteMovies = await getFavouriteMovies();
 
   const genres = movies.reduce((acc, movie) => {
     const genres = movie.genre?.split(",").map((genre) => genre.trim());
@@ -25,8 +27,7 @@ export async function getGenereAndMovies() {
       if (!acc[genre]) {
         acc[genre] = [];
       }
-      const isFavorite = favoriteMovies.some((fav) => fav.id === movie.id);
-      acc[genre].push({ ...movie, isFavorite });
+      acc[genre].push({ ...movie });
     });
     return acc;
   }, {});
@@ -40,8 +41,21 @@ export async function getFavouriteMovies() {
 }
 
 export async function addFavouriteMovie(movie) {
-  favoriteMovies.push(movie);
+  const index = favoriteMovies.find((fav) => fav.title === movie.title);
+  if (index === -1) {
+    favoriteMovies.push(movie);
+    toogleFavourite(movie);
+  }
 }
 export async function removeFavouriteMovie(movie) {
-  favoriteMovies = favoriteMovies.filter((fav) => fav.id !== movie.id);
+  favoriteMovies = favoriteMovies.filter((fav) => fav.title !== movie.title);
+  toogleFavourite(movie);
+}
+
+export async function toogleFavourite(movie) {
+  if (movie.providerName === "IMDB") {
+    toggleimdbIDFavoriteMovie(movie.title);
+  } else if (movie.providerName === "RT") {
+    toggleRTFavoriteMovie(movie.title);
+  }
 }
