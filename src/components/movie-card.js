@@ -1,23 +1,53 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import FallbackImage from "./FallbackImage";
+import FavouriteIcon from "./FavouriteIcon";
+import { addFavouriteMovie, removeFavouriteMovie } from "@/server/movies";
 
 export default function MovieCard({ movie }) {
-    return (
-        <div key={movie.id} className="p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
-        <Image
-            src={movie.poster}
-            alt={movie.title}
-            className="rounded-lg w-full h-64 object-cover"
-            width={300}
-            height={450}
-        />
-        <div className="mt-4">
-            <h2 className="text-md font-semibold text-gray-800 dark:text-white">
-                {movie.title}
-            </h2>
-            <p className="mt-2 text-gray-600 dark:text-gray-300">
-                {movie.plot}
-            </p>
+  const [hovered, setHovered] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(movie.isFavorite || false);
+
+  const handleSetFavourite = async (isFavourite) => {
+    setIsFavorite(isFavourite);
+    if (isFavourite) {
+      await removeFavouriteMovie(movie);
+    } else {
+      await addFavouriteMovie(movie);
+    }
+  };
+
+  return (
+    <div
+      key={movie.id}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className={`relative max-w-sm p-4 bg-white rounded-lg shadow-md dark:bg-gray-800 group transition-all duration-500 delay-500  ${
+        hovered ? "h-full" : "h-80"
+      }`}
+    >
+      <FallbackImage
+        imageSrc={movie.poster}
+        alt={movie.title}
+        className="object-cover w-full h-64 rounded-lg"
+      />
+      <div className="mt-4">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold text-gray-800 text-md dark:text-white">
+            {movie.title}
+          </h2>
+          <FavouriteIcon
+            isFavorite={isFavorite || false}
+            toggleFavourite={handleSetFavourite}
+          />
         </div>
-    </div>        
-    )
+
+        {/* Plot text container */}
+        <p className="mt-2 text-gray-600 transition-opacity duration-500 delay-500 opacity-0 dark:text-gray-300 group-hover:opacity-100">
+          {movie.plot}
+        </p>
+      </div>
+    </div>
+  );
 }
