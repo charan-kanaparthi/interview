@@ -7,14 +7,17 @@ import { addFavouriteMovie, removeFavouriteMovie } from "@/server/movies";
 
 export default function MovieCard({ movie }) {
   const [hovered, setHovered] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(movie.isFavorite || false);
+  const [isFavorite, setIsFavorite] = useState(movie.isFavorite);
 
   const handleSetFavourite = async (isFavourite) => {
     setIsFavorite(isFavourite);
+
     if (isFavourite) {
       await removeFavouriteMovie(movie);
+      window.location.reload();
     } else {
       await addFavouriteMovie(movie);
+      window.location.reload();
     }
   };
 
@@ -24,7 +27,7 @@ export default function MovieCard({ movie }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className={`relative max-w-sm p-4 bg-white rounded-lg shadow-md dark:bg-gray-800 group transition-all duration-500 delay-500  ${
-        hovered ? "h-full" : "h-80"
+        hovered ? "h-full" : "h-[360px]"
       }`}
     >
       <FallbackImage

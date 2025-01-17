@@ -11,6 +11,15 @@ export async function getMovies() {
       poster: movie.poster || movie.images[0],
       imdbRating: movie.imdbRating,
       plot: movie.Plot,
+      providerName: "RT",
     };
+  });
+}
+
+export async function toggleRTFavoriteMovie(title) {
+  data.movies.forEach((item) => {
+    if (item.title === title || item.Title === title) {
+      item.isFavorite = !item.isFavorite;
+    }
   });
 }
