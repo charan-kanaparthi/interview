@@ -3,5 +3,5 @@
 import data from "./data.json";
 
 export async function getMovies() {
-    return data.movies;
+  return data.movies;
 }
